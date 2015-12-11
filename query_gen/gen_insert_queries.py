@@ -26,7 +26,7 @@ def generate_insert_queries(n):
     for i in range(n):
         latitude = get_random_lat()
         longitude = get_random_long()
-        q = "(%d, 'POINT(%s %s)')" %(i+1, str(latitude), str(longitude))
+        q = "(%d, 'POINT(%s %s)')" %(i+1, str(longitude), str(latitude))
         values.append(q)
     queries.append("INSERT INTO drivers VALUES\n" + ",\n".join(values) + ";")
     return queries
