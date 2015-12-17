@@ -9,10 +9,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const READ_MAX = 100
+const READ_MAX = 999
 
 func main() {
-	db, err := sql.Open("postgres", "user=postgres password=123456 dbname=cabspike sslmode=disable")
+	db, err := sql.Open("postgres", "user=postgres dbname=cabspike port=6543 sslmode=disable password=123456")
 	defer db.Close()
 
 	if err != nil {
@@ -38,7 +38,7 @@ func main() {
 }
 
 func readDatabase(db *sql.DB, finished chan bool) {
-	rows, err := db.Query("SELECT count(*) from drivers")
+	rows, err := db.Query("select count(*) from drivers d where ST_DWithin(d.geog, ST_GeomFromText('POINT(12.99612 77.57553)'), 1500)")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,7 +48,7 @@ func readDatabase(db *sql.DB, finished chan bool) {
 	for rows.Next() {
 		err = rows.Scan(&count)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 	}
 
