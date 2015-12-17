@@ -9,7 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const READ_MAX = 999
+const READ_MAX = 4999
 
 func main() {
 	db, err := sql.Open("postgres", "user=postgres dbname=cabspike port=6543 sslmode=disable password=123456")
