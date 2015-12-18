@@ -9,7 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const READ_MAX = 4999
+const READ_MAX = 14999
 
 func main() {
 	db, err := sql.Open("postgres", "user=postgres dbname=cabspike port=6543 sslmode=disable password=123456")
@@ -38,7 +38,7 @@ func main() {
 }
 
 func readDatabase(db *sql.DB, finished chan bool) {
-	rows, err := db.Query("select driver_id from drivers d where ST_DWithin(d.geog, ST_GeomFromText('POINT(12.99612 77.57553)'), 1500) limit 5")
+	rows, err := db.Query("select driver_id from drivers d where ST_DWithin(d.geog, ST_GeomFromText('POINT(12.99612 77.57553)'), 1500) limit 10")
 	if err != nil {
 		log.Fatal(err)
 	}
