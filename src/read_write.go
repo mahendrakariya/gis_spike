@@ -38,7 +38,7 @@ func main() {
 }
 
 func readDatabase(db *sql.DB, finished chan bool) {
-	rows, err := db.Query("select count(*) from drivers d where ST_DWithin(d.geog, ST_GeomFromText('POINT(12.99612 77.57553)'), 1500)")
+	rows, err := db.Query("select driver_id from drivers d where ST_DWithin(d.geog, ST_GeomFromText('POINT(12.99612 77.57553)'), 1500) limit 5")
 	if err != nil {
 		log.Fatal(err)
 	}
