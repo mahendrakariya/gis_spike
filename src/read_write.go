@@ -43,23 +43,6 @@ func main() {
 	fmt.Printf("Total read time for %v connections: %v ms\n", readMax, totalTime/int64(time.Millisecond))
 }
 
-func randLat() float64 {
-	latMin := 12.813196
-	latMax := 13.055798
-	return randomBetween(latMin, latMax)
-}
-
-func randLong() float64 {
-	longMin := 77.474313
-	longMax := 77.767158
-	return randomBetween(longMin, longMax)
-}
-
-func randDriverID() int {
-	rand.Seed(time.Now().UTC().UnixNano())
-	return rand.Intn(10000) + 1
-}
-
 func readDatabase(db *sql.DB, finished chan bool) {
 	randomLat := randLat()
 	randomLong := randLong()
@@ -102,4 +85,21 @@ func writeDatabase(db *sql.DB, finished chan bool) {
 func randomBetween(min, max float64) float64 {
 	rand.Seed(time.Now().UTC().UnixNano())
 	return rand.Float64()*(max-min) + min
+}
+
+func randLat() float64 {
+	latMin := 12.813196
+	latMax := 13.055798
+	return randomBetween(latMin, latMax)
+}
+
+func randLong() float64 {
+	longMin := 77.474313
+	longMax := 77.767158
+	return randomBetween(longMin, longMax)
+}
+
+func randDriverID() int {
+	rand.Seed(time.Now().UTC().UnixNano())
+	return rand.Intn(10000) + 1
 }
