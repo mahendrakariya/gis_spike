@@ -10,8 +10,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const READ_MAX = 14999
-const WRITE_MAX = 1
+const readMax = 14999
+const writeMax = 1
 
 func main() {
 	db, err := sql.Open("postgres", "user=postgres dbname=cabspike port=6543 sslmode=disable password=123456")
@@ -23,24 +23,24 @@ func main() {
 
 	finished := make(chan bool)
 
-	for i := 0; i < READ_MAX; i++ {
+	for i := 0; i < readMax; i++ {
 		go readDatabase(db, finished)
 	}
 
-	for i := 0; i < WRITE_MAX; i++ {
+	for i := 0; i < writeMax; i++ {
 		go writeDatabase(db, finished)
 	}
 
-	var total_time int64
-	for i := 0; i < READ_MAX+WRITE_MAX; i++ {
+	var totalTime int64
+	for i := 0; i < readMax+writeMax; i++ {
 		start := time.Now()
 		<-finished
-		total_time += time.Since(start).Nanoseconds()
+		totalTime += time.Since(start).Nanoseconds()
 		start = time.Now()
 	}
-	avg_time_ns := total_time / READ_MAX
-	fmt.Printf("Avg read time: %v ms\n", avg_time_ns/int64(time.Millisecond))
-	fmt.Printf("Total read time for %v connections: %v ms\n", READ_MAX, total_time/int64(time.Millisecond))
+	avgTimeInNS := totalTime / readMax
+	fmt.Printf("Avg read time: %v ms\n", avgTimeInNS/int64(time.Millisecond))
+	fmt.Printf("Total read time for %v connections: %v ms\n", readMax, totalTime/int64(time.Millisecond))
 }
 
 func randLat() float64 {
@@ -55,7 +55,7 @@ func randLong() float64 {
 	return randomBetween(longMin, longMax)
 }
 
-func randDriverId() int {
+func randDriverID() int {
 	rand.Seed(time.Now().UTC().UnixNano())
 	return rand.Intn(10000) + 1
 }
@@ -86,9 +86,9 @@ func readDatabase(db *sql.DB, finished chan bool) {
 func writeDatabase(db *sql.DB, finished chan bool) {
 	randomLat := randLat()
 	randomLong := randLong()
-	driverId := randDriverId()
+	driverID := randDriverID()
 
-	query := fmt.Sprintf("UPDATE drivers set geog='POINT(%v %v)' where driver_id=%v", randomLat, randomLong, driverId)
+	query := fmt.Sprintf("UPDATE drivers set geog='POINT(%v %v)' where driver_id=%v", randomLat, randomLong, driverID)
 	result, err := db.Exec(query)
 
 	if err != nil {
