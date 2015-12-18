@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"math/rand"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -38,7 +39,18 @@ func main() {
 }
 
 func readDatabase(db *sql.DB, finished chan bool) {
-	rows, err := db.Query("select driver_id from drivers d where ST_DWithin(d.geog, ST_GeomFromText('POINT(12.99612 77.57553)'), 1500) limit 10")
+	latMin := 12.813196
+	latMax := 13.055798
+
+	longMin := 77.474313
+	longMax := 77.767158
+
+	randomLat := randomBetween(latMin, latMax)
+	randomLong := randomBetween(longMin, longMax)
+
+	query := fmt.Sprintf("select driver_id from drivers d where ST_DWithin(d.geog, ST_GeomFromText('POINT(%v %v)'), 1500) limit 10", randomLat, randomLong)
+	rows, err := db.Query(query)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,4 +75,9 @@ func writeDatabase(db *sql.DB) {
 	}
 	res, err := result.RowsAffected()
 	fmt.Printf("Rows affected %v", res)
+}
+
+func randomBetween(min, max float64) float64 {
+	rand.Seed(time.Now().UTC().UnixNano())
+	return rand.Float64()*(max-min) + min
 }
