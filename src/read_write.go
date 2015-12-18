@@ -40,7 +40,7 @@ func main() {
 	}
 	avgTimeInNS := totalTime / readMax
 	fmt.Printf("Avg read time: %v ms\n", avgTimeInNS/int64(time.Millisecond))
-	fmt.Printf("Total read time for %v connections: %v ms\n", readMax, totalTime/int64(time.Millisecond))
+	fmt.Printf("Total read time for %v connections: %v ms\n", readMax+writeMax, totalTime/int64(time.Millisecond))
 }
 
 func readDatabase(db *sql.DB, finished chan bool) {
