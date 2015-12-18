@@ -10,8 +10,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const readMax = 14999
-const writeMax = 1
+const readMax = 15000
+const writeMax = 8000
 
 func main() {
 	db, err := sql.Open("postgres", "user=postgres dbname=cabspike port=6543 sslmode=disable password=123456")
@@ -77,8 +77,8 @@ func writeDatabase(db *sql.DB, finished chan bool) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	res, err := result.RowsAffected()
-	fmt.Printf("Rows affected %v", res)
+	result.RowsAffected()
+	//fmt.Printf("Rows affected %v", res)
 	finished <- true
 }
 
@@ -101,5 +101,5 @@ func randLong() float64 {
 
 func randDriverID() int {
 	rand.Seed(time.Now().UTC().UnixNano())
-	return rand.Intn(10000) + 1
+	return rand.Intn(100000) + 1
 }
