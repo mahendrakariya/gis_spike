@@ -7,14 +7,16 @@ import (
 	"math/rand"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 )
 
 const readMax = 15000
 const writeMax = 8000
+const database = "postgres"
 
 func main() {
-	db, err := sql.Open("postgres", "user=postgres dbname=cabspike port=6543 sslmode=disable password=123456")
+	db, err := getDatabase(database)
 	defer db.Close()
 
 	if err != nil {
@@ -44,10 +46,7 @@ func main() {
 }
 
 func readDatabase(db *sql.DB, finished chan bool) {
-	randomLat := randLat()
-	randomLong := randLong()
-
-	query := fmt.Sprintf("select driver_id from drivers d where ST_DWithin(d.geog, ST_GeomFromText('POINT(%v %v)'), 1500) limit 10", randomLat, randomLong)
+	query := getReadQuery(database)
 	rows, err := db.Query(query)
 
 	if err != nil {
@@ -102,4 +101,27 @@ func randLong() float64 {
 func randDriverID() int {
 	rand.Seed(time.Now().UTC().UnixNano())
 	return rand.Intn(100000) + 1
+}
+
+func getDatabase(dbname string) (*sql.DB, error) {
+	if dbname == "postgres" {
+		return sql.Open("postgres", "user=postgres dbname=cabspike port=6543 sslmode=disable password=123456")
+	}
+	if dbname == "memsql" {
+		return sql.Open("mysql", "root:@tcp(localhost:3037)/cabspike")
+	}
+	return nil, nil
+}
+
+func getReadQuery(dbname string) string {
+	randomLat := randLat()
+	randomLong := randLong()
+
+	if dbname == "postgres" {
+		return fmt.Sprintf("select driver_id from drivers d where ST_DWithin(d.geog, ST_GeomFromText('POINT(%v %v)'), 1500) limit 10", randomLat, randomLong)
+	}
+	if dbname == "memsql" {
+		return fmt.Sprintf("select driver_id from drivers d where GEOGRAPHY_DISTANCE_WITHIN(d.geog, ST_GeomFromText('POINT(%v %v)'), 1500) limit 10", randomLat, randomLong)
+	}
+	return ""
 }
