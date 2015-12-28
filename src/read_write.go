@@ -108,7 +108,7 @@ func getDatabase(dbname string) (*sql.DB, error) {
 		return sql.Open("postgres", "user=postgres dbname=cabspike port=6543 sslmode=disable password=123456")
 	}
 	if dbname == "memsql" {
-		return sql.Open("mysql", "root:@tcp(localhost:3037)/cabspike")
+		return sql.Open("mysql", "root:@tcp(localhost:3036)/cabspike")
 	}
 	return nil, nil
 }
