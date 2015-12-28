@@ -13,7 +13,7 @@ import (
 
 const readMax = 15000
 const writeMax = 8000
-const database = "postgres"
+const database = "memsql"
 
 func main() {
 	db, err := getDatabase(database)
@@ -121,7 +121,7 @@ func getReadQuery(dbname string) string {
 		return fmt.Sprintf("select driver_id from drivers d where ST_DWithin(d.geog, ST_GeomFromText('POINT(%v %v)'), 1500) limit 10", randomLat, randomLong)
 	}
 	if dbname == "memsql" {
-		return fmt.Sprintf("select driver_id from drivers d where GEOGRAPHY_WITHIN_DISTANCE(d.geog, ST_GeomFromText('POINT(%v %v)'), 1500) limit 10", randomLat, randomLong)
+		return fmt.Sprintf("select driver_id from drivers d where GEOGRAPHY_WITHIN_DISTANCE(d.geog, 'POINT(%v %v)', 1500) limit 10", randomLat, randomLong)
 	}
 	return ""
 }
