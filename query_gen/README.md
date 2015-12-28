@@ -17,7 +17,7 @@ CREATE TABLE drivers(
 **For memsql:**
 ```
 CREATE TABLE drivers(
-     driver_id  INTEGER,
+     driver_id  INT PRIMARY KEY,
      geog       GEOGRAPHYPOINT
 )
 ```
