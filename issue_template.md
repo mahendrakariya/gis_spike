@@ -1,3 +1,0 @@
-### Issue 
-
-#### Steps to reproduce
